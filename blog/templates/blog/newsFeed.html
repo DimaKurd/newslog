@@ -1,0 +1,164 @@
+{% extends 'blog/blocks/common.html' %}
+
+{% block body %}
+    {% if feed %}
+        <div class="container">
+
+            {% for event in feed %}
+                <div class="jumbotron">
+                    <div class="container">
+                        <div class="thumbnail">
+                            {% if event.type == 1 %}
+                                <a href="{{ event.link }}"><h3 class="text-justify">{{ event.header | safe}}</h3></a>
+                            {% else %}
+                                <h3 class="text-justify">{{ event.header }}</h3>
+                            {% endif %}
+                            <div class="row">
+                                {% if event.picture %}
+                                    <div class="col-xs-offset-1 col-xs-10 col-sm-offset-0 col-sm-4">
+                                        <img class="img-thumbnail img-responsive" src="{{ event.picture }}"
+                                             alt="post's picture">
+                                    </div>
+                                    <div class="col-xs-12 col-sm-8">
+                                        <div class="caption">
+
+                                            <p class="text-justify">{{ event.body | safe }}</p>
+                                            <p>
+                                                {% if event.type == 1 %}
+                                                    <a href="{% url 'blog:get_news_wall' event.src.id %}">
+                                                        {{ event.src.name }}
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'blog:wall' event.src.id %}">
+                                                        {{ event.src.username }}
+                                                    </a>
+                                                {% endif %}
+                                                , {{ event.publish_date }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="col-xs-12">
+                                        <div class="caption">
+
+                                            <p class="text-justify">{{ event.body | safe }}</p>
+                                            <p>
+                                            {% if event.type == 1 %}
+                                                <a href="{% url 'blog:get_news_wall' event.src.id %}">
+                                                    {{ event.src.name }}
+                                                </a>
+                                            {% else %}
+                                                <a href="{% url 'blog:wall' event.src.id %}">
+                                                    {{ event.src.username }}
+                                                </a>
+                                            {% endif %}
+                                            , {{ event.publish_date }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        {% if event.type == 0 %}
+                            <p>
+                                <button class="btn btn-primary" type="button" data-toggle="collapse"
+                                        data-target="#comments_of_{{ event.id }}" aria-expanded="false"
+                                        aria-controls="comments_of_{{ event.id }}">
+                                    Комментарии <span class="badge">{{ event.comments | length }}</span>
+                                </button>
+                            </p>
+                            <div class="collapse" id="comments_of_{{ event.id }}">
+                                <div class="thumbnail">
+                                    <form class="form-horizontal" method="post"
+                                          action="{% url 'blog:comment' event.id %}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-4" for="comment_text">Добавьте
+                                                комментарий</label>
+                                            <div class="col-sm-8">
+                                                <textarea class="form-control" id="comment_text" name="body"></textarea>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" value="{% url 'blog:get_feed' %}" name="next">
+                                        <input type="hidden" value="{{ feed.number }}" name="page">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-5 col-sm-2">
+                                                <button type="submit" class="btn btn-success">Добавить</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    {% if event.comments %}
+                                        <div class="comments_block">
+                                            {% for comment in event.comments %}
+                                                <div class="thumbnail">
+                                                    <p>
+                                                        <a href="{% url 'blog:wall' comment.owner.id %}">{{ comment.owner.username }}</a>
+                                                    </p>
+                                                    <p>{{ comment.body }}</p>
+                                                    <p>{{ comment.date }}</p>
+                                                    {% if comment.owner == user %}
+                                                        <form class="form-horizontal" method="post"
+                                                              action="{% url 'blog:delete_comment' comment.id %}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" value="{% url 'blog:get_feed' %}"
+                                                                   name="next">
+                                                            <div class="form-group">
+                                                                <div class="col-sm-offset-5 col-sm-2">
+                                                                    <button type="submit" class="btn btn-danger">
+                                                                        Удалить
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    {% endif %}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row">
+            <nav id="pagination" aria-label="Page navigation">
+                <ul class="pagination">
+                    {% if feed.has_previous %}
+                        <li><a href="?page=1">&laquo; first</a></li>
+                        <li>
+                            <a href="?page={{ feed.previous_page_number }}">{{ feed.previous_page_number }}</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="active">
+                <span>{{ feed.number }}<span
+                        class="sr-only">(current)</span></span>
+                    </li>
+
+                    {% if feed.has_next %}
+                        <li><a href="?page={{ feed.next_page_number }}">{{ feed.next_page_number }}</a></li>
+                        <li><a href="?page={{ feed.paginator.num_pages }}">last &raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+
+
+    {% else %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Кажется, вы не подписаны ни на один источник новостей. Откройте вкладку
+                        <strong>Подписки</strong></p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

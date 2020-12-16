@@ -1,0 +1,64 @@
+{% extends 'blog/blocks/common.html' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+            <div class="thumbnail">
+                <h2>Изменить пост</h2>
+                <form class="form-horizontal" method="post" action="{% url 'blog:post_update' post.id %}"
+                      enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="header_input">Заголовок</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" id="header_input" name="header"
+                                   value="{{ post.header }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="body_input">Текст поста</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" id="body_input"
+                                      name="body">{{ post.body }}</textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        {% if post.picture %}
+                            <img class="img-responsive col-xs-6" src="{{ post.picture }}"
+                                 alt="прикрепленное изображение">
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+
+                        <label class="col-sm-2 control-label" for="picture_input">Прикрепите новое фото</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="picture_input" name="picture" type="file"
+                                   accept="image/*">
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-sm-offset-5 col-sm-2">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-1 col-sm-10">
+
+            <form class="form-horizontal" method="post" action="{% url 'blog:delete_post' post.id %}">
+                <div class="form-group">
+                    <div class="col-sm-offset-5 col-sm-2">
+                        <button class="btn btn-danger" type="submit">Удалить пост</button>
+                    </div>
+                </div>
+                {% csrf_token %}
+            </form>
+
+
+        </div>
+    </div>
+
+{% endblock %}

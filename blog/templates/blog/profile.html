@@ -1,0 +1,91 @@
+{% extends 'blog/blocks/common.html' %}
+{% load static %}
+{% block body %}
+    <script src="{% static 'blog/JS/script.js' %}"></script>
+    {% if status == 1 %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class=" alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Данные успешно изменены</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="jumbotron col-md-offset-3 col-md-6">
+
+        <div class="row"><h2 class="text-center">Настройка профиля пользователя {{ user.username }}</h2></div>
+
+        <form class="form-horizontal" onsubmit="return checkPasswords(this)" action="{% url 'blog:profile' %}"
+              method="post"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {% if user.avatar %}
+                    <img class="img-thumbnail img-responsive col-xs-offset-3 col-xs-6 col-md-offset-4 col-md-3"
+                         src="{{ user.avatar }}"
+                         alt="Не удалось загрузить изображение">
+                {% else %}
+                    <img class="img-thumbnail img-responsive col-xs-offset-3 col-xs-6"
+                         src="{% static 'blog/IMG/userpic.png' %}"
+                         alt="Не удалось загрузить изображение">
+                {% endif %}
+
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="picture_input">Прикрепите фото для аватара</label>
+                <div class="col-sm-8">
+                    <input class="form-control" id="picture_input" name="avatar" type="file" accept="image/*">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="bio">Укажите краткую информацию о себе</label>
+                <div class="col-sm-8">
+                    <input class="form-control" id="bio" name="bio" type="text" value="{{ user.bio }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary col-xs-offset-1 col-xs-10" type="button" data-toggle="collapse"
+                        data-target="#changing_pass" aria-expanded="false"
+                        aria-controls="changing_pass">
+                    Смена пароля
+                </button>
+            </div>
+            <div id="changing_pass" class="col-xs-12 collapse">
+                <div class="container">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="password1">Придумайте новый пароль</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="password" id="password1" name="password1"
+                                   pattern="[A-Za-z0-9_-#$.]{8,}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" for="password2">Повторите пароль</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="password" id="password2" name="password2"
+                                   pattern="[A-Za-z0-9_-#$.]{8,}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-5 col-sm-2">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+
+
+
+
+{% endblock %}

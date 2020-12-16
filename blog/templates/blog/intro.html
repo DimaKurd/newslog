@@ -1,0 +1,51 @@
+{% extends 'blog/blocks/common.html' %}
+
+{% block body %}
+    {% if log_stat == 1 %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Авторизация успешна</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    {% if password == 1 %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Пароль изменен успешно</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="jumbotron">
+        <div class="container">
+            <h2>Знакомство с системой</h2>
+            <p>Данный сайт позволяет пользователям вести собственный блог, следить за обновлениями страниц других
+                пользователей и подписываться на новости крупных изданий (BBC, РБК, Яндекс)</p>
+            <h2>Доступные источники новостей</h2>
+            <div class="row">
+                {% for news_sr in news_srs %}
+                    <div class="col-xs-4  col-md-3">
+                        <div class="thumbnail">
+                            <div class="row">
+                                <a href="{% url 'blog:get_news_wall' news_sr.id %}">
+                                    <img class="col-xs-12" src="{{ news_sr.icon }}" alt="icon">
+                                </a>
+                            </div>
+                            <div class="news_desc caption">
+                                <h3 class="text-center">{{ news_sr.name }}</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

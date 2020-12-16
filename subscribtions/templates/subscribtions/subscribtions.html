@@ -1,0 +1,148 @@
+{% extends 'blog/blocks/common.html' %}
+{% load static %}
+
+
+{% block body %}
+    <script src="{% static 'subscribtions/JS/script.js' %}"></script>
+    {% if success == True %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Изменения сохранены</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if news_srcs %}
+        <div id="subscribe_news" class="row">
+
+            <button class="btn btn-primary col-xs-offset-1 col-xs-10" type="button" data-toggle="collapse"
+                    data-target="#news_subs" aria-expanded="false"
+                    aria-controls="news_subs">
+                Подписаться на RSS канал <span class="badge">{{ news_subs | length }}</span>
+            </button>
+
+        </div>
+
+        <div id="news_subs" class="row collapse">
+            <div class="col-lg-offset-2 col-lg-8">
+                <div class="jumbotron">
+                    <h3>Используйте эту форму для добавления новых источников новостей</h3>
+                    <form class="form-horizontal" method="post" action="{% url 'subscribtions:updateNews' %}">
+                        {% csrf_token %}
+                        <table id="news_sources" class="table table-bordered table-sm">
+                            <thead>
+                            <tr>
+                                <th>
+                                    Название
+                                </th>
+                                <th>
+                                    Тип
+                                </th>
+                                <th>
+                                    Выбрать
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for src in news_srcs %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'blog:get_news_wall' src.id %}">{{ src.name }}</a>
+                                    </td>
+                                    <td>
+                                        {{ src.type.name }}
+                                    </td>
+                                    <td>
+                                        <input {% if src.name in news_subs %}
+                                            checked
+                                        {% endif %}  id="src{{ src.id }}" type="checkbox" name="{{ src.name }}"
+                                            value="{{ True }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <button class="btn btn-success" type="submit">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    {% endif %}
+
+    {% if blog_srcs %}
+        <div id="subscribe_blogs" class="row">
+            <button class="btn btn-primary col-xs-offset-1 col-xs-10" type="button" data-toggle="collapse"
+                    data-target="#blog_subs" aria-expanded="false"
+                    aria-controls="blog_subs">
+                Подписаться на обновления блога <span class="badge">{{ blog_subs | length }}</span>
+            </button>
+        </div>
+        <div id="blog_subs" class="row collapse">
+            <div class="col-lg-offset-2 col-lg-8">
+                <div class="jumbotron">
+                    <h3>Подпишитесь на других пользователей!</h3>
+                    <form class="form-horizontal" method="post" action="{% url 'subscribtions:updateBlogs' %}">
+                        {% csrf_token %}
+                        <table id="blog_sources" class="table table-bordered table-sm">
+                            <thead>
+                            <tr>
+                                <th>
+                                    Имя
+                                </th>
+                                <th>
+                                    Информация
+                                </th>
+                                <th>
+                                    Выбрать
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for src in blog_srcs %}
+                                <tr>
+                                    <td>
+                                    <a href="{% url 'blog:wall' src.id %}">
+                                        {% if src.avatar %}
+                                            <img class="img-responsive" src="{{ src.avatar }}" alt="user's avatar"
+                                                 width="50px">
+                                        {% else %}
+                                            <img class="img-responsive" src="{% static 'blog/IMG/userpic.png' %}"
+                                                 alt="no avatar" width="50px">
+                                        {% endif %}
+
+                                         {{ src.username }}</a>
+                                    </td>
+                                    <td>
+                                        {{ src.bio }}
+                                    </td>
+                                    <td>
+                                        <input {% if src.username in blog_subs %}
+                                            checked
+                                        {% endif %}  id="src{{ src.id }}" type="checkbox" name="{{ src.username }}"
+                                            value="{{ True }}">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <div class="form-group">
+                            <div class="col-sm-2">
+                                <button class="btn btn-success" type="submit">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

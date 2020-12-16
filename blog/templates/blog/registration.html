@@ -1,0 +1,68 @@
+{% extends 'blog/blocks/common.html' %}
+{% load static %}
+
+{% block body %}
+    <script src="{% static 'blog/JS/script.js' %}"></script>
+    {% if reg_stat == 0 %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <p class="text-center">Логин занят. Попробуйте использовать другой никнейм</p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <div class="container-fluid">
+        <div class="col-md-6">
+            <div class="jumbotron">
+                <form class="form-horizontal" onsubmit="return checkPasswords(this)"
+                      action="{% url 'blog:registration' %}" method="post">
+                    <div class="form-group">
+                        <label class="control-label col-md-4" for="username">Придумайте логин</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="text" id="username" name="username"
+                                   pattern="[A-Za-z0-9_-]{8,}" required>
+                        </div>
+                        <div class="col-xs-12">
+                            <p class="help-block">Логин должен содержать не менее восьми знаков, включая латинские
+                                буквы, цифры, знаки дефиса и подчеркивания</p>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="e-mail">Укажите e-mail</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="email" id="e-mail" name="email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="password1">Придумайте пароль</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="password" id="password1" name="password1"
+                                   pattern="[A-Za-z0-9_-]{8,}" required>
+                        </div>
+                        <div class="col-xs-12">
+                            <p class="help-block">Пароль должен содержать не менее восьми знаков, включая латинские
+                                буквы, цифры, знаки дефиса и подчеркивания</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="password2">Повторите пароль</label>
+                        <div class="col-md-8">
+                            <input class="form-control" type="password" id="password2" name="password2" required pattern="[A-Za-z0-9_-]{8,}">
+                        </div>
+                    </div>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <div class="col-sm-2">
+                            <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
